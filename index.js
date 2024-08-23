@@ -37,7 +37,7 @@ const Player = (name, marker) => {
     return { getName, getMarker};
 }
 
-const Game = () => {
+const Game = (() => {
     const player1 = Player('Player 1', 'X');
     const player2 = Player('Player 2', 'O');
 
@@ -52,17 +52,18 @@ const Game = () => {
     const playTurn = (row, col) => {
         if (board.placeMarker(currentPlayer.getMarker(), col, row)) {
             if (checkWin()){
-                console.log(`${currentPlayer.getName()} wins!`)
+                displayController.updateMessage(`${currentPlayer.getName()} wins!`)
             }
             else if (checkTie()){
-                console.log("It's a tie!")
+                displayController.updateMessage("It's a tie!")
             }
             else {
                 switchPlayer()
             }
+            displayController.updateDisplay(board.getBoard());
         }
         else {
-            console.log("cell is already taken!");
+            displayController.updateMessage("Cell is already taken!");
         }
     }
 
@@ -104,7 +105,43 @@ const Game = () => {
         return true;
     }
 
-    return { playTurn };
+    const getBoard = () => board.getBoard();
 
-}
+    return { playTurn, getBoard };
 
+})();
+
+const displayController = (() => {
+    const boardElement = document.getElementById('gameboard');
+    const messageElement = document.getElementById('message');
+
+    const renderBoard = (board) => {
+        boardElement.innerHTML = '';
+        board.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell')
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', () => {
+                    Game.playTurn(rowIndex, colIndex);
+                })
+                boardElement.appendChild(cellElement);
+            })
+        })
+    };
+
+    const updateMessage = (message) => {
+        messageElement.textContent = message;
+    }
+
+    const updateDisplay = (board) => {
+        renderBoard(board);
+    }
+
+    return {renderBoard, updateMessage, updateDisplay };
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+    displayController.renderBoard(Game.getBoard());
+    displayController.updateMessage("Player 1's turn")
+});
