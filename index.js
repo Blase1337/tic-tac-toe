@@ -1,147 +1,103 @@
-const Gameboard = () => {
-    const row = 3;
-    const column = 3;
-    const board = []
+const Gameboard = (() => {
+    let board = ["","","","","","","","",""];
 
-    for (let i = 0; i < row; i++){
-        board[i] = []
-        for(let j = 0; j < column; j++){
-            board[i].push('');
-        }
+    const getBoard = () => {
+        return board;
     }
-
-    const getBoard = () => board;
-
-    const placeMarker = (marker, col, row) => {
-        if(board[row][col] === ''){
-            board[row][col] = marker;
-            return true;
-        }
-        return false
-    };
 
     const resetBoard = () => {
-        for (let i = 0; i < row; i++){
-            for (let j = 0; j < column; j++){
-                board[i][j] = '';
-            }
-        }
+        board = ["","","","","","","","",""];
+    }
+
+    const updateBoard = (index, marker) => {
+        if (board[index] === ""){
+            board[index] = marker;
+        } 
     };
-    return { getBoard, placeMarker, resetBoard};
-};
+
+    return {
+        getBoard,
+        resetBoard,
+        updateBoard
+    }
+})();
 
 const Player = (name, marker) => {
-    const getName = () => name;
-    const getMarker = () => marker;
-
-    return { getName, getMarker};
+    return {name, marker};
 }
 
-const Game = (() => {
-    const player1 = Player('Player 1', 'X');
-    const player2 = Player('Player 2', 'O');
+const game = (() => {
+    let currentPlayer = Player("P1", "X");
+    let players = [Player("P1", "X"), Player("P2", "O")];
+    let isGameOver = false;
 
-    const board = Gameboard();
+    const switchTurn = () => {
+        currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
+    };
+    
 
-    let currentPlayer = player1;
-
-    const switchPlayer = () => {
-        currentPlayer = currentPlayer === player1 ? player2 : player1;
-    }
-
-    const playTurn = (row, col) => {
-        if (board.placeMarker(currentPlayer.getMarker(), col, row)) {
-            if (checkWin()){
-                displayController.updateMessage(`${currentPlayer.getName()} wins!`)
-            }
-            else if (checkTie()){
-                displayController.updateMessage("It's a tie!")
-            }
-            else {
-                switchPlayer()
-            }
-            displayController.updateDisplay(board.getBoard());
-        }
-        else {
-            displayController.updateMessage("Cell is already taken!");
-        }
-    }
+    const winningCombos = [
+        [0,1,2], [3,4,5],[6,7,8], //rows
+        [0,3,6],[1,4,7],[2,5,8], //cols
+        [0,4,8],[2,4,6]         //diagonal
+    ];
 
     const checkWin = () => {
-        const winningCombo = [
-            [[0, 0], [0, 1], [0, 2]],  // First row
-            [[1, 0], [1, 1], [1, 2]],  // Second row
-            [[2, 0], [2, 1], [2, 2]],  // Third row
-            [[0, 0], [1, 0], [2, 0]],  // First column
-            [[0, 1], [1, 1], [2, 1]],  // Second column
-            [[0, 2], [1, 2], [2, 2]],  // Third column
-            [[0, 0], [1, 1], [2, 2]],  // Diagonal from top-left to bottom-right
-            [[2, 0], [1, 1], [0, 2]],  // Diagonal from bottom-left to top-right
-        ];
-    
-        for (let combo of winningCombo) {
-            const [a, b, c] = combo;
-            if (
-                board.getBoard()[a[0]][a[1]] &&
-                board.getBoard()[a[0]][a[1]] === board.getBoard()[b[0]][b[1]] &&
-                board.getBoard()[a[0]][a[1]] === board.getBoard()[c[0]][c[1]]
-            ) {
-                return true;
+        const board = Gameboard.getBoard();
+        for (let i = 0; i< winningCombos.length; i++){
+            const [a,b,c] = winningCombos[i];
+            if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]){
+                isGameOver = true;
+                return board[a];
             }
-        }
-        return false; // No winning combination found
-    }
 
-    const checkTie = () => {
-        const boardArray = board.getBoard();
-
-        for (let row of boardArray) {
-            for (let cell of row){
-                if (cell === ''){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    const getBoard = () => board.getBoard();
-
-    return { playTurn, getBoard };
-
-})();
-
-const displayController = (() => {
-    const boardElement = document.getElementById('gameboard');
-    const messageElement = document.getElementById('message');
-
-    const renderBoard = (board) => {
-        boardElement.innerHTML = '';
-        board.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-                const cellElement = document.createElement('div');
-                cellElement.classList.add('cell')
-                cellElement.textContent = cell;
-                cellElement.addEventListener('click', () => {
-                    Game.playTurn(rowIndex, colIndex);
-                })
-                boardElement.appendChild(cellElement);
-            })
-        })
+        };
+        return null;
     };
 
-    const updateMessage = (message) => {
-        messageElement.textContent = message;
-    }
-
-    const updateDisplay = (board) => {
-        renderBoard(board);
-    }
-
-    return {renderBoard, updateMessage, updateDisplay };
+    const playerTurn = (index) => {
+        checkWin();
+        if (!isGameOver) {
+            Gameboard.updateBoard(index, currentPlayer.marker);
+            switchTurn();
+        }
+        else {
+            console.log(`Player ${currentPlayer} wins!`)
+        }
+    };
+    return{ playerTurn };
+ 
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
-    displayController.renderBoard(Game.getBoard());
-    displayController.updateMessage("Player 1's turn")
-});
+
+const displayController = (() => {
+    const renderBoard = () => {
+        let gameboardDiv = document.getElementById('gameboard');
+        const board = Gameboard.getBoard();
+
+        board.forEach((mark, index) => {
+            let cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.textContent = mark;
+
+            cell.addEventListener('click', () => {
+                handleCellClick(index);
+
+            });
+            gameboardDiv.appendChild(cell);
+        });
+
+        const handleCellClick = (index) => {
+            const board = Gameboard.getBoard();
+
+            if (board[index] === ""){
+                game.playerTurn(index);
+
+            }
+        };
+        
+    }
+    return { renderBoard };
+})();
+
+displayController.renderBoard();
