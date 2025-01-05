@@ -6,7 +6,7 @@ const Gameboard = (function() {
 })();
 
 const Players = (function() {
-    const players = [
+    const getPlayers = [
         {
             name: player1,
             marker: "x"
@@ -19,30 +19,38 @@ const Players = (function() {
     let activePlayer = players[0];
 
     const switchTurn = () => {
-        activePlayer = activePlayer === players[0] ? players[1] :players[0]
+        activePlayer = activePlayer === players[0] ? players[1] :players[0] //ternary operator to switch player
     };
 
-    const getActivePlayer = () => activePlayer;
-    return {players, getActivePlayer, switchTurn}
+    const getActivePlayer = () => activePlayer; //returns the active player use after switching turns
+    return {getPlayers, getActivePlayer, switchTurn}
 })();
 
 function GameController() {
-    const board = Gameboard.board;
-    const players = Players.players;
-    const activePlayer = Players.getActivePlayer;
+    const board = Gameboard.board();
+    const players = Players.getPlayers();
+    const activePlayer = Players.getActivePlayer();
 
     const checkwin = () => {
-        const winCondition = [[board[0],board[1],board[2]], [board[3],board[4],board[5]], [board[6],board[7],board[8]],[board[0],board[4],board[8]], [board[6],board[4],board[2]]];
+        const winCondition = [[0,1,2], [3,4,5], [6,7,9],[0,4,8], [6,4,2]];
         for(let combo of winCondition){
             const [a,b,c] = combo;
             if (board[a] === board[b] && board[b] === board[c]){
-                return board[a];
+                return board[a]; //returns the winner
             }
         }
+        return null //no winner
     }
+
     const playTurn = (pos, marker) =>{
         board[pos] = marker;
-        checkWin();
+        const winner = checkwin(); //returns either null (no winner) or the marker of the winner
+        if (!winner) { //null would be falsy any string/value would be truthy
+            Players.switchTurn();
+            activePlayer = Players.getActivePlayer();
+        }
+        
     }
-}
+    return {playTurn, checkwin}
+};
 
