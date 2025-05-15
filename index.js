@@ -1,70 +1,113 @@
-const Gameboard = (function() {
+/* 
+What I need:
+1. Display controller- something to update the interface after the console version is working
+*/
+
+
+
+
+const Gameboard = (function () {
     let board = ["","","","","","","","",""];
-    const getBoard = () => [...board];
-    const placeMarker = (pos, marker) => {
-        if (board[pos] === "") {
+    const getBoard = () => {
+        return [...board];
+    }
+    const placeMarker = (pos, marker) =>{ 
+        if (board[pos] == "") {
             board[pos] = marker;
         }
         else {
-            console.log("Please pick a valid square");
+            console.log("This square is taken");
         }
     }
-    const resetBoard = () => board = ["","","","","","","","",""];
-
-    return {getBoard, resetBoard, placeMarker};
+    const resetBoard = () => {
+        board = ["","","","","","","","",""];
+    }
+    return {getBoard, placeMarker, resetBoard}
 })();
 
-const Players = (function() {
+const Players = (function () {
     const players = [
         {
-            name: "player1",
-            marker: "x"
+            name: "Player 1",
+            marker: "X"
         },
         {
-            name: "player2",
-            marker: "o"
+            name: "Player 2",
+            marker: "O"
         }
-    ];
+    ]
 
-    const getPlayers = () => [...players];
+    const getPlayers = () => {
+        return [...players];
+    }
     let activePlayer = getPlayers()[0];
 
     const switchTurn = () => {
-        activePlayer = activePlayer === players[0] ? players[1] :players[0] //ternary operator to switch player
-    };
+        activePlayer = activePlayer === getPlayers()[0] ? getPlayers()[1] : getPlayers()[0];
+    }
 
-    const getActivePlayer = () => activePlayer; //returns the active player use after switching turns
-    return {getPlayers, getActivePlayer, switchTurn}
+    const getActivePlayer = () => {
+        return activePlayer;
+    }
+
+    return {getPlayers, switchTurn, getActivePlayer}
 })();
 
-function GameController() {
-    const players = Players.getPlayers();
-    let activePlayer = Players.getActivePlayer();
-
-    const checkwin = () => {
-        const board = Gameboard.getBoard();
-        const winCondition = [[0,1,2], [3,4,5], [6,7,8],[0,4,8], [6,4,2], [0,3,6], [1,4,7],[2,5,8]];
-        for(let combo of winCondition){
-            const [a,b,c] = combo;
-            if (board[a] === board[b] && board[b] === board[c]){
-                return board[a]; //returns the winner
-            }
-        }
-        return null //no winner
-    }
-
-    const playTurn = (pos) =>{
+const GameController = (function () {
+    const playTurn = (pos) => {
+        const activePlayer = Players.getActivePlayer();
         const marker = activePlayer.marker;
         Gameboard.placeMarker(pos, marker);
-        const winner = checkwin(); //returns either null (no winner) or the marker of the winner
-        if (winner) { //null would be falsy any string/value would be truthy
-            console.log(`${winner} has won`)
-            Gameboard.resetBoard();
+        let winner = checkWin();
+        if (winner) {
+            console.log(winner)
         }
-        Players.switchTurn();
-        activePlayer = Players.getActivePlayer();
-        
+        else {
+            Players.switchTurn()
+        }
     }
-    return {playTurn, checkwin}
-};
 
+    const checkWin = () => {
+        const board = Gameboard.getBoard();
+        let winCondition = [[0,1,2], [3,4,5], [6,7,8], // left to right
+                            [0,3,6], [1,4,7], [2,5,8],// up to down
+                            [0,4,8], [2,4,6] // diagonal
+                            ]
+        for (let combo of winCondition) {
+            const [a,b,c] = combo
+            if (board[a] && board[a] == board[b] && board[b] == board[c]){
+                return Players.getActivePlayer().name; //winning marker
+            }
+        }
+    }
+    return {playTurn, checkWin}
+})();
+
+
+const DisplayController = (function () {
+    const boardContainer = document.getElementById('gameboard');
+
+    const renderBoard = () => {
+        const board = Gameboard.getBoard();
+        boardContainer.innerHTML = "";
+
+        board.forEach((cell, index) => {
+            const cellElement = document.createElement("div");
+            cellElement.classList.add("cell");
+            cellElement.textContent = cell;
+
+            cellElement.addEventListener("click", () => {
+                if (cellElement.textContent == "") {
+                    GameController.playTurn(index);
+                    renderBoard();
+                }
+            })
+            boardContainer.appendChild(cellElement);
+
+        });
+    }
+
+    return {renderBoard}
+})();
+
+DisplayController.renderBoard();
