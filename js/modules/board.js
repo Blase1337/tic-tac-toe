@@ -1,5 +1,5 @@
 const Board = (() => {
-    let board = ["X", "X", "X", "", "", "", "", "", ""]; // board as an empty array
+    let board = ["", "", "", "", "", "", "", "", ""]; // board as an empty array
 
     const getBoard = () => {
         return [...board]; // returns copy of board array
