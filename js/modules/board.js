@@ -6,7 +6,6 @@ const Board = (() => {
     }
 
     const updateBoard = (currentPlayer, index) => {
-        console.log(currentPlayer.marker);
         board[index] = currentPlayer.marker;
     }
 
@@ -17,4 +16,25 @@ const Board = (() => {
     return {getBoard, resetBoard, updateBoard}
 })();
 
-export {Board};
+const renderBoard = () => {
+    let boardContainer = document.getElementById("boardContainer");
+    for( let i= 0; i< Board.getBoard().length; i++){
+        let cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.addEventListener("click", () => {
+            
+        })
+        boardContainer.appendChild(cell);
+        }
+
+};
+
+const updateBoard = () => {
+    let cellList = document.querySelectorAll(".cell");
+    Board.getBoard().forEach((value, i) => {
+        cellList[i].textContent = value;
+    })
+}
+
+
+export {Board, renderBoard, updateBoard};
