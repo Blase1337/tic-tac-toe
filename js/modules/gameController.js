@@ -8,7 +8,12 @@ const playTurn = (index) => {
     updateBoard();
     console.log(Board.getBoard());
     if (checkWin()) {
-        console.log(`${currentPlayer.name} wins`)
+        const winTextBox = document.querySelector(".winTextBox");
+        let winDiv = document.createElement('div');
+        winDiv.className = "winDiv";
+        winDiv.textContent = (`${currentPlayer.name} wins`);
+        winTextBox.appendChild(winDiv);
+        console.log(`${currentPlayer.name} wins`);
     }
     else {
         Players.switchTurn();

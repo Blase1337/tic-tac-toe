@@ -45,6 +45,8 @@ const updateBoard = () => {
     })
 }
 
+
+
 const resetBoardButton = () => {
     let resetBtn = document.getElementById("resetBtn");
     resetBtn.addEventListener("click", () => {Board.resetBoard(); Players.resetTurn(); updateBoard(); })
