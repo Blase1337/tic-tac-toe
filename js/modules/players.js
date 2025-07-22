@@ -10,15 +10,14 @@ const Players = (() => {
         }
     ]
 
-    const getCurrentPlayer = () => {
-        let currentPlayer = players[0];
-        return currentPlayer;
-    }
+    let currentPlayer = players[0];
+
+    const getCurrentPlayer = () => currentPlayer
 
     const switchTurn = () => {
-        let currentPlayer = getCurrentPlayer();
-        return currentPlayer === players[0] ? players[1] : players[0];
-};
+        console.log(currentPlayer);
+        currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
+    };
 
 
     return {getCurrentPlayer, switchTurn}

@@ -3,4 +3,3 @@ import {updateBoard, renderBoard} from "./modules/board.js"
 
 
 renderBoard();
-playTurn();

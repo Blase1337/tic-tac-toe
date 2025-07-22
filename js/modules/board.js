@@ -1,3 +1,5 @@
+import {playTurn} from "./gameController.js"
+
 const Board = (() => {
     let board = ["", "", "", "", "", "", "", "", ""]; // board as an empty array
 
@@ -5,7 +7,7 @@ const Board = (() => {
         return [...board]; // returns copy of board array
     }
 
-    const updateBoard = (currentPlayer, index) => {
+    const setSquare = (currentPlayer, index) => {
         board[index] = currentPlayer.marker;
     }
 
@@ -13,7 +15,7 @@ const Board = (() => {
         board = ["", "", "", "", "", "", "", "", ""];
     }
 
-    return {getBoard, resetBoard, updateBoard}
+    return {getBoard, resetBoard, setSquare}
 })();
 
 const renderBoard = () => {
@@ -21,18 +23,24 @@ const renderBoard = () => {
     for( let i= 0; i< Board.getBoard().length; i++){
         let cell = document.createElement("div");
         cell.classList.add("cell");
-        cell.addEventListener("click", () => {
-            
+        cell.dataset.index = i;
+        cell.addEventListener("click", (e) => {
+            const index = Number(e.target.dataset.index);
+            console.log(index);
+            if (Board.getBoard()[index] == "") {
+                playTurn(index);
+            }
         })
         boardContainer.appendChild(cell);
         }
-
 };
 
 const updateBoard = () => {
     let cellList = document.querySelectorAll(".cell");
-    Board.getBoard().forEach((value, i) => {
-        cellList[i].textContent = value;
+    const board = Board.getBoard();
+    cellList.forEach((cell) => {
+        const index = Number(cell.dataset.index);
+        cell.textContent = board[index];
     })
 }
 

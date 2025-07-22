@@ -1,10 +1,11 @@
-import { Board } from "./board.js";
+import { Board, updateBoard } from "./board.js";
 import { Players } from "./players.js";
 
 
 const playTurn = (index) => {
-    const currentPlayer = Players.getCurrentPlayer();
-    Board.updateBoard(currentPlayer, index)
+    let currentPlayer = Players.getCurrentPlayer();
+    Board.setSquare(currentPlayer, index);
+    updateBoard();
     console.log(Board.getBoard());
     if (checkWin()) {
         console.log(`${currentPlayer.name} wins`)
