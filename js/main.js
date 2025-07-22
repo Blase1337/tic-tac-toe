@@ -1,5 +1,6 @@
 import {playTurn} from "./modules/gameController.js"
-import {updateBoard, renderBoard} from "./modules/board.js"
+import { renderBoard, resetBoardButton} from "./modules/board.js"
 
 
 renderBoard();
+resetBoardButton();

@@ -1,4 +1,5 @@
 import {playTurn} from "./gameController.js"
+import {Players} from "./players.js"
 
 const Board = (() => {
     let board = ["", "", "", "", "", "", "", "", ""]; // board as an empty array
@@ -44,5 +45,12 @@ const updateBoard = () => {
     })
 }
 
+const resetBoardButton = () => {
+    let resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", () => {Board.resetBoard(); Players.resetTurn(); updateBoard(); })
+    
+}
 
-export {Board, renderBoard, updateBoard};
+
+
+export {Board, renderBoard, updateBoard, resetBoardButton};

@@ -19,8 +19,10 @@ const Players = (() => {
         currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
     };
 
+    const resetTurn = () => currentPlayer = players[0];
 
-    return {getCurrentPlayer, switchTurn}
+
+    return {getCurrentPlayer, switchTurn, resetTurn }
 })();
 
 export {Players}
