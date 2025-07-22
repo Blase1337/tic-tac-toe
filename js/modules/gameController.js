@@ -1,5 +1,6 @@
 import { Board, updateBoard } from "./board.js";
 import { Players } from "./players.js";
+import {DOM} from "./DOMCache.js";
 
 
 const playTurn = (index) => {
@@ -8,7 +9,7 @@ const playTurn = (index) => {
     updateBoard();
     console.log(Board.getBoard());
     if (checkWin()) {
-        const winTextBox = document.querySelector(".winTextBox");
+        const winTextBox = DOM.winTextBox;
         let winDiv = document.createElement('div');
         winDiv.className = "winDiv";
         winDiv.textContent = (`${currentPlayer.name} wins`);

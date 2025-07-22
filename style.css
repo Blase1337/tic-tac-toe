@@ -1,10 +1,19 @@
 .gameContainer {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#resetBtn {
+    width: clamp(5rem, 5vw, 20vw);
 }
 
 .gameContainer > .winTextBox {
-    font-size: 3vmax;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    font-size: 3vw;
     text-align: center;
 }
 

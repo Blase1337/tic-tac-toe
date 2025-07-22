@@ -1,5 +1,6 @@
 import {playTurn} from "./gameController.js"
 import {Players} from "./players.js"
+import {DOM} from "./DOMCache.js"
 
 const Board = (() => {
     let board = ["", "", "", "", "", "", "", "", ""]; // board as an empty array
@@ -20,7 +21,7 @@ const Board = (() => {
 })();
 
 const renderBoard = () => {
-    let boardContainer = document.getElementById("boardContainer");
+    let boardContainer = DOM.boardContainer;
     for( let i= 0; i< Board.getBoard().length; i++){
         let cell = document.createElement("div");
         cell.classList.add("cell");
@@ -49,7 +50,8 @@ const updateBoard = () => {
 
 const resetBoardButton = () => {
     let resetBtn = document.getElementById("resetBtn");
-    resetBtn.addEventListener("click", () => {Board.resetBoard(); Players.resetTurn(); updateBoard(); })
+    const winTextBox = DOM.winTextBox;
+    resetBtn.addEventListener("click", () => {Board.resetBoard(); Players.resetTurn(); updateBoard(); winTextBox.textContent = ""; })
     
 }
 
