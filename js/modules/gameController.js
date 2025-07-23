@@ -1,13 +1,23 @@
-import { Board } from "./board.js";
+import { Board, updateBoard } from "./board.js";
 import { Players } from "./players.js";
+import {DOM} from "./DOMCache.js";
 
 
 const playTurn = (index) => {
-    const currentPlayer = Players.getCurrentPlayer();
-    Board.updateBoard(currentPlayer, index)
+    let currentPlayer = Players.getCurrentPlayer();
+    Board.setSquare(currentPlayer, index);
+    updateBoard();
     console.log(Board.getBoard());
     if (checkWin()) {
-        console.log(`${currentPlayer.name} wins`)
+        const winTextBox = DOM.winTextBox;
+        let winDiv = document.createElement('div');
+        winDiv.className = "winDiv";
+        winDiv.textContent = (`${currentPlayer.name} wins`);
+        winTextBox.appendChild(winDiv);
+        console.log(`${currentPlayer.name} wins`);
+    }
+    else if (checkTie()) {
+        console.log("its a draw");
     }
     else {
         Players.switchTurn();
@@ -24,7 +34,13 @@ const checkWin = () => {
             return board[a];
         }
     }
+
     return null;
+};
+
+const checkTie = () => {
+    const board = Board.getBoard();
+    return board.every(cell => cell !== "");
 };
 
 

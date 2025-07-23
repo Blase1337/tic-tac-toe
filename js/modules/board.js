@@ -1,3 +1,7 @@
+import {playTurn} from "./gameController.js"
+import {Players} from "./players.js"
+import {DOM} from "./DOMCache.js"
+
 const Board = (() => {
     let board = ["", "", "", "", "", "", "", "", ""]; // board as an empty array
 
@@ -5,8 +9,7 @@ const Board = (() => {
         return [...board]; // returns copy of board array
     }
 
-    const updateBoard = (currentPlayer, index) => {
-        console.log(currentPlayer.marker);
+    const setSquare = (currentPlayer, index) => {
         board[index] = currentPlayer.marker;
     }
 
@@ -14,7 +17,44 @@ const Board = (() => {
         board = ["", "", "", "", "", "", "", "", ""];
     }
 
-    return {getBoard, resetBoard, updateBoard}
+    return {getBoard, resetBoard, setSquare}
 })();
 
-export {Board};
+const renderBoard = () => {
+    let boardContainer = DOM.boardContainer;
+    for( let i= 0; i< Board.getBoard().length; i++){
+        let cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.addEventListener("click", (e) => {
+            const index = Number(e.target.dataset.index);
+            console.log(index);
+            if (Board.getBoard()[index] == "") {
+                playTurn(index);
+            }
+        })
+        boardContainer.appendChild(cell);
+        }
+};
+
+const updateBoard = () => {
+    let cellList = document.querySelectorAll(".cell");
+    const board = Board.getBoard();
+    cellList.forEach((cell) => {
+        const index = Number(cell.dataset.index);
+        cell.textContent = board[index];
+    })
+}
+
+
+
+const resetBoardButton = () => {
+    let resetBtn = document.getElementById("resetBtn");
+    const winTextBox = DOM.winTextBox;
+    resetBtn.addEventListener("click", () => {Board.resetBoard(); Players.resetTurn(); updateBoard(); winTextBox.textContent = ""; })
+    
+}
+
+
+
+export {Board, renderBoard, updateBoard, resetBoardButton};
