@@ -1,7 +1,7 @@
 const Players = (() => {
     let players = [
         {
-            name: "player 1",
+            name: "Player 1",
             marker: "X",
         },
         {

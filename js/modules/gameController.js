@@ -16,6 +16,9 @@ const playTurn = (index) => {
         winTextBox.appendChild(winDiv);
         console.log(`${currentPlayer.name} wins`);
     }
+    else if (checkTie()) {
+        console.log("its a draw");
+    }
     else {
         Players.switchTurn();
     }
@@ -31,7 +34,13 @@ const checkWin = () => {
             return board[a];
         }
     }
+
     return null;
+};
+
+const checkTie = () => {
+    const board = Board.getBoard();
+    return board.every(cell => cell !== "");
 };
 
 
